@@ -27,6 +27,11 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- create clean conformlogs
+vim.api.nvim_create_user_command('CleanLog', function()
+  vim.cmd('%s/\\[[0-9;]*m//g')
+end, {})
+
 -- Disable all auto-commenting
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "*",

@@ -21,9 +21,9 @@ return {
           prepend_args = function(self, ctx)
             -- Force HTML parser for EJS files
             if ctx.filetype == "ejs" then
-              return { "--parser", "html" }
+              return { "--no-color", "--parser", "html" }  -- ← Include --no-color here
             end
-            return {}
+            return { "--no-color" }  -- ← And here!
           end,
         },
       },
