@@ -85,3 +85,6 @@ vim.opt.shell = 'pwsh'
 vim.opt.shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command'
 vim.opt.shellquote = ''
 vim.opt.shellxquote = ''
+
+-- Open terminal with \+t
+vim.keymap.set('n', '<leader>t', ':botright vsp | terminal<CR>', { desc = 'Open terminal in vsplit' })
