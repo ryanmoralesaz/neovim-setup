@@ -1,4 +1,7 @@
--- Bootstrap lazy.nvim
+--- Show filename in the title/tabline
+vim.opt.title = true
+vim.opt.titlestring = "%t - nvim" -- %t = tail of filename- Bootstrap lazy.nvim
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({
