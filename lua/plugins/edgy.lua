@@ -1,6 +1,6 @@
 return {
   "folke/edgy.nvim",
-  lazy = false,  -- Load immediately instead of VeryLazy
+  lazy = false, -- Load immediately instead of VeryLazy
   opts = {
     left = {
       {
@@ -14,5 +14,5 @@ return {
         size = { height = 0.4 },
       },
     },
-  }
+  },
 }

@@ -1,3 +1,3 @@
 return {
-  'jamessan/vim-gnupg',
+  "jamessan/vim-gnupg",
 }

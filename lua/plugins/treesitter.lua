@@ -20,8 +20,8 @@ return {
         enable = true,
       },
     })
-    
+
     -- Treat EJS as HTML
-    vim.treesitter.language.register('html', 'ejs')
+    vim.treesitter.language.register("html", "ejs")
   end,
 }

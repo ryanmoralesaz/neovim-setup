@@ -9,7 +9,7 @@ return {
       html = { "htmlhint" },
       css = { "stylelint" },
     }
-    
+
     -- Lint on save and when entering buffer
     vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
       callback = function()

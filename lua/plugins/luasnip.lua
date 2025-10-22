@@ -3,7 +3,7 @@ return {
   dependencies = { "rafamadriz/friendly-snippets" },
   config = function()
     local ls = require("luasnip")
-    
+
     -- JavaScript snippets
     ls.add_snippets("javascript", {
       ls.snippet("c", {
@@ -23,7 +23,7 @@ return {
         ls.text_node("ctx.response"),
       }),
     })
-    
+
     -- TypeScript snippets
     ls.add_snippets("typescript", {
       ls.snippet("c", {
@@ -43,21 +43,21 @@ return {
         ls.text_node("ctx.response"),
       }),
     })
-    
+
     -- Tab to expand/jump
-    vim.keymap.set({"i", "s"}, "<Tab>", function()
+    vim.keymap.set({ "i", "s" }, "<Tab>", function()
       if ls.expand_or_jumpable() then
         ls.expand_or_jump()
       else
         return "<Tab>"
       end
-    end, {silent = true})
-    
+    end, { silent = true })
+
     -- Shift-Tab to jump backwards
-    vim.keymap.set({"i", "s"}, "<S-Tab>", function()
+    vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
       if ls.jumpable(-1) then
         ls.jump(-1)
       end
-    end, {silent = true})
+    end, { silent = true })
   end,
 }

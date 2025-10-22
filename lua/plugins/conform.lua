@@ -11,7 +11,7 @@ return {
         html = { "prettier" },
         css = { "prettier" },
         ejs = { "prettier" },
-	lua = { "stylua" },  -- Add this line
+        lua = { "stylua" },
       },
       format_on_save = {
         timeout_ms = 5000,
@@ -20,12 +20,22 @@ return {
       formatters = {
         prettier = {
           prepend_args = function(self, ctx)
-            -- Force HTML parser for EJS files
+            local args = {
+              "--no-color",
+              "--use-tabs=false",
+              "--tab-width=2",
+            }
+
             if ctx.filetype == "ejs" then
-              return { "--no-color", "--parser", "html" }  -- ← Include --no-color here
+              table.insert(args, "--parser")
+              table.insert(args, "html")
             end
-            return { "--no-color" }  -- ← And here!
+
+            return args
           end,
+        },
+        stylua = {
+          prepend_args = { "--indent-type", "Spaces", "--indent-width", "2" },
         },
       },
     })
