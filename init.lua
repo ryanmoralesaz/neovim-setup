@@ -147,15 +147,12 @@ vim.opt.softtabstop = 2 -- Number of spaces for editing operations
 vim.opt.autowrite = true
 vim.opt.autowriteall = true
 
--- Auto-save with formatting on focus lost, buffer switch, and insert leave
+-- Auto-save WITHOUT formatting on InsertLeave/BufLeave/FocusLost
 vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave", "InsertLeave" }, {
   callback = function()
     if vim.bo.modified and not vim.bo.readonly and vim.fn.expand("%") ~= "" and vim.bo.buftype == "" then
-      -- Format before saving
-      pcall(function()
-        require("conform").format({ timeout_ms = 500, lsp_fallback = true })
-      end)
-      vim.api.nvim_command("silent! write")
+      -- Save WITHOUT formatting (noautocmd prevents format_on_save from triggering)
+      vim.api.nvim_command("silent! noautocmd write")
     end
   end,
 })
