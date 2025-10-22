@@ -7,7 +7,7 @@ return {
       javascriptreact = { "eslint" },
       typescriptreact = { "eslint" },
       html = { "htmlhint" },
-      css = { "stylelint" },
+      -- css = { "stylelint" },
     }
 
     -- Lint on save and when entering buffer

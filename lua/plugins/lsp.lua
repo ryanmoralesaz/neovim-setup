@@ -156,10 +156,20 @@ return {
     })
 
     -- Diagnostic signs
-    local signs = { Error = "E", Warn = "W", Hint = "H", Info = "I" }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-    end
+    -- Diagnostic signs (new method for Neovim 0.11+)
+    vim.diagnostic.config({
+      virtual_text = true,
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = "E",
+          [vim.diagnostic.severity.WARN] = "W",
+          [vim.diagnostic.severity.HINT] = "H",
+          [vim.diagnostic.severity.INFO] = "I",
+        },
+      },
+      underline = true,
+      update_in_insert = false,
+      severity_sort = true,
+    })
   end,
 }
