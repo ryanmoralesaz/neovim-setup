@@ -143,14 +143,18 @@ vim.opt.shiftwidth = 2 -- Number of spaces for indentation
 vim.opt.tabstop = 2 -- Number of spaces a tab counts for
 vim.opt.softtabstop = 2 -- Number of spaces for editing operations
 
--- Auto-save settings (add near your other vim.opt settings)
-vim.opt.autowrite = true -- Auto-save before certain commands
-vim.opt.autowriteall = true -- Auto-save in more situations
+-- Auto-save settings
+vim.opt.autowrite = true
+vim.opt.autowriteall = true
 
--- Auto-save on focus lost, buffer switch, and after typing stops
+-- Auto-save with formatting on focus lost, buffer switch, and insert leave
 vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave", "InsertLeave" }, {
   callback = function()
     if vim.bo.modified and not vim.bo.readonly and vim.fn.expand("%") ~= "" and vim.bo.buftype == "" then
+      -- Format before saving
+      pcall(function()
+        require("conform").format({ timeout_ms = 500, lsp_fallback = true })
+      end)
       vim.api.nvim_command("silent! write")
     end
   end,
