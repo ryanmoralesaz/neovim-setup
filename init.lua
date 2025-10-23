@@ -129,7 +129,13 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = false
-vim.opt.shell = "pwsh"
+-- choose shell for os
+if vim.fn.has('win32') == 1 then
+  vim.o.shell = 'pwsh'
+else
+  vim.o.shell = vim.fn.executable('zsh') == 1 and 'zsh' or 'bash'
+end
+
 vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
 vim.opt.shellquote = ""
 vim.opt.shellxquote = ""
