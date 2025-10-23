@@ -117,8 +117,22 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
--- Use system clipboard
-vim.opt.clipboard = "unnamedplus"
+-- Use OSC 52 for SSH, native clipboard for local
+if vim.env.SSH_CONNECTION then
+  vim.g.clipboard = {
+    name = 'OSC 52',
+    copy = {
+      ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+      ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+    },
+    paste = {
+      ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+      ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+    },
+  }
+else
+  vim.opt.clipboard = "unnamedplus"
+end
 
 -- Tree shortcut
 vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
