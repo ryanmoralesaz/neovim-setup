@@ -11,7 +11,7 @@ return {
       close_if_last_window = false, -- Don't close if it's the last window
       popup_border_style = "rounded",
       window = {
-        width = 30, -- Default width, will be overridden by the autocmd
+        width = 35, -- Increased to show full filenames
         position = "left",
       },
       enable_git_status = true,
@@ -68,12 +68,15 @@ return {
           { "name", use_git_status_colors = true },
         },
       },
+      -- CRITICAL: Disable line numbers in Neo-tree
       event_handlers = {
         {
           event = "neo_tree_buffer_enter",
           handler = function()
-            vim.opt_local.relativenumber = true
-            vim.opt_local.number = true
+            vim.opt_local.relativenumber = false
+            vim.opt_local.number = false
+            vim.opt_local.signcolumn = "no"
+            vim.opt_local.foldcolumn = "0"
           end,
         },
       },
@@ -91,6 +94,6 @@ return {
       highlight NeoTreeGitStaged guifg=#98c379
     ]])
 
-    vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
+    vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
   end,
 }

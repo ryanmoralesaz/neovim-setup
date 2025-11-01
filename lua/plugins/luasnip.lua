@@ -4,44 +4,18 @@ return {
   config = function()
     local ls = require("luasnip")
 
-    -- JavaScript snippets
-    ls.add_snippets("javascript", {
-      ls.snippet("c", {
-        ls.text_node("console.log("),
-        ls.insert_node(1),
-        ls.text_node(");"),
-      }),
-      ls.snippet("cw", {
-        ls.text_node("console.warn("),
-        ls.insert_node(1),
-        ls.text_node(");"),
-      }),
-      ls.snippet("creq", {
-        ls.text_node("ctx.request"),
-      }),
-      ls.snippet("cres", {
-        ls.text_node("ctx.response"),
-      }),
+    -- Load snippets from lua/snippets/ directory
+    require("luasnip.loaders.from_lua").load({
+      paths = vim.fn.stdpath("config") .. "/lua/snippets",
     })
 
-    -- TypeScript snippets
-    ls.add_snippets("typescript", {
-      ls.snippet("c", {
-        ls.text_node("console.log("),
-        ls.insert_node(1),
-        ls.text_node(");"),
-      }),
-      ls.snippet("cw", {
-        ls.text_node("console.warn("),
-        ls.insert_node(1),
-        ls.text_node(");"),
-      }),
-      ls.snippet("creq", {
-        ls.text_node("ctx.request"),
-      }),
-      ls.snippet("cres", {
-        ls.text_node("ctx.response"),
-      }),
+    -- IMPORTANT: Extend filetypes AFTER loading snippets
+    ls.filetype_extend("javascriptreact", { "javascript" })
+    ls.filetype_extend("typescriptreact", { "javascript", "typescript" })
+
+    -- Force reload to apply filetype extensions
+    require("luasnip.loaders.from_lua").load({
+      paths = vim.fn.stdpath("config") .. "/lua/snippets",
     })
 
     -- Tab to expand/jump

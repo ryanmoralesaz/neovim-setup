@@ -36,16 +36,30 @@ return {
       },
       mapping = cmp.mapping.preset.insert({
         ["<C-Space>"] = cmp.mapping.complete(),
-        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+
+        -- CRITICAL: Enter closes menu and inserts newline (does NOT accept completion)
+        ["<CR>"] = cmp.mapping({
+          i = function(fallback)
+            if cmp.visible() then
+              cmp.abort() -- Close the menu
+            end
+            fallback() -- Insert newline
+          end,
+        }),
+
+        -- CRITICAL: Tab for snippet expansion and completion navigation
         ["<Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
+          if luasnip.expandable() then
+            luasnip.expand()
+          elseif cmp.visible() then
             cmp.select_next_item()
-          elseif luasnip.expand_or_jumpable() then
-            luasnip.expand_or_jump()
+          elseif luasnip.jumpable(1) then
+            luasnip.jump(1)
           else
             fallback()
           end
         end, { "i", "s" }),
+
         ["<S-Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_prev_item()
@@ -106,7 +120,7 @@ return {
         root_markers = { ".eslintrc.js", ".eslintrc.json", "eslint.config.js" },
       },
       capabilities = capabilities,
-      on_attach = on_attach, -- Just use the regular on_attach, removed the EslintFixAll autocmd
+      on_attach = on_attach,
     }
 
     -- Configure HTML
@@ -147,16 +161,6 @@ return {
     vim.lsp.enable("emmet_ls")
 
     -- Diagnostic configuration
-    vim.diagnostic.config({
-      virtual_text = true,
-      signs = true,
-      underline = true,
-      update_in_insert = false,
-      severity_sort = true,
-    })
-
-    -- Diagnostic signs
-    -- Diagnostic signs (new method for Neovim 0.11+)
     vim.diagnostic.config({
       virtual_text = true,
       signs = {
