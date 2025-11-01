@@ -1,0 +1,53 @@
+# Lazy.nvim plugin directory
+lazy-lock.json
+
+# LSP servers and data
+**/*-linux64/
+**/*-language-server/
+
+# Telescope history
+telescope_history
+
+# Session files
+*.vim
+*.session
+
+# Swap files
+*.swp
+*.swo
+*~
+
+# Undo files
+*.un~
+
+# Backup files
+*~
+*.bak
+
+# Database UI files (if using dadbod)
+db_ui/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+tmp/
+temp/
+
+# Node modules (if any plugins use them)
+node_modules/
+
+# Python cache (if any plugins use Python)
+__pycache__/
+*.pyc
+
+# macOS hidden files
+._*
+
+# Plugin directory (gets rebuilt from configs)
+plugin/
+
+# Luarc config
+.luarc.json
