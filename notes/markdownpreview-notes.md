@@ -1,0 +1,65 @@
+Remove-Item "$env:LOCALAPPDATA\nvim-data\lazy\markdown-preview.nvim" -Recurse -Force
+
+css place in 
+"$env:LOCALAPPDATA\nvim\markdown-preview.css"
+```css
+body {
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 1200px; /* Increased from 800px - makes content wider */
+  margin: 0 auto;
+  padding: 1em 2em; /* Top/bottom: 1em, Left/right: 2em */
+}
+
+/* Remove those annoying link icons from headers */
+h1 .octicon-link,
+h2 .octicon-link,
+h3 .octicon-link,
+h4 .octicon-link,
+h5 .octicon-link,
+h6 .octicon-link,
+.anchor {
+  display: none !important;
+}
+
+h1 {
+  font-size: 2em;
+  margin-top: 1em;
+}
+h2 {
+  font-size: 1.5em;
+  margin-top: 0.8em;
+}
+h3 {
+  font-size: 1.2em;
+  margin-top: 0.6em;
+}
+
+p {
+  margin-bottom: 0.8em; /* Reduced from 1.2em */
+}
+
+code {
+  font-size: 0.9em;
+}
+
+/* Tighter spacing for print */
+@media print {
+  body {
+    max-width: 100%;
+    padding: 0.5em 1em;
+    font-size: 16px; /* Smaller for print */
+    line-height: 1.6; /* Tighter for print */
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin-top: 0.5em;
+  }
+
+  p {
+    margin-bottom: 0.8em;
+  }
+}
+```

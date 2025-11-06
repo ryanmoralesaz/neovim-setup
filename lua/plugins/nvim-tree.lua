@@ -8,11 +8,29 @@ return {
   },
   config = function()
     require("neo-tree").setup({
-      close_if_last_window = false, -- Don't close if it's the last window
+      close_if_last_window = false,
       popup_border_style = "rounded",
       window = {
-        width = 35, -- Increased to show full filenames
+        width = 35,
         position = "left",
+        mappings = {
+          -- Copy absolute path to clipboard
+          ["Y"] = function(state)
+            local node = state.tree:get_node()
+            local path = node.path
+            vim.fn.setreg("+", path)
+            print("Copied absolute: " .. path)
+          end,
+          -- Copy relative path to clipboard
+          ["y"] = function(state)
+            local node = state.tree:get_node()
+            local path = node.path
+            local cwd = vim.fn.getcwd()
+            local rel_path = path:gsub("^" .. vim.pesc(cwd) .. "[/\\]", "")
+            vim.fn.setreg("+", rel_path)
+            print("Copied relative: " .. rel_path)
+          end,
+        },
       },
       enable_git_status = true,
       enable_diagnostics = true,
@@ -68,7 +86,6 @@ return {
           { "name", use_git_status_colors = true },
         },
       },
-      -- CRITICAL: Disable line numbers in Neo-tree
       event_handlers = {
         {
           event = "neo_tree_buffer_enter",
@@ -81,8 +98,6 @@ return {
         },
       },
     })
-
-    -- Set git status colors (VS Code style)
     vim.cmd([[
       highlight NeoTreeGitAdded guifg=#98c379
       highlight NeoTreeGitModified guifg=#e5c07b
@@ -93,7 +108,6 @@ return {
       highlight NeoTreeGitUnstaged guifg=#e5c07b
       highlight NeoTreeGitStaged guifg=#98c379
     ]])
-
-    vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
+    --    vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
   end,
 }

@@ -14,6 +14,11 @@ vim.keymap.set("n", "<leader>ws", "<C-w>s", { desc = "Split horizontally" })
 vim.keymap.set("n", "<leader>wq", "<C-w>q", { desc = "Close window" })
 vim.keymap.set("n", "<leader>wo", "<C-w>o", { desc = "Close other windows" })
 
+-- Neo tree toggle ctrl+n and ;+n
+vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
+vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
+vim.opt.timeoutlen = 300 -- Make ;n faster (reduces wait time for leader key)
+
 -- Show filename in the title/tabline
 vim.opt.title = true
 vim.opt.titlestring = "%t - nvim"
@@ -40,6 +45,11 @@ vim.filetype.add({
     tsx = "typescriptreact",
   },
 })
+
+-- Neo tree toggle ctrl+n and ;+n
+vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
+vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
+vim.opt.timeoutlen = 300 -- Make ;n faster (reduces wait time for leader key)
 
 -- Set JavaScript-style comments
 vim.api.nvim_create_autocmd("FileType", {
@@ -335,3 +345,17 @@ vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave", "InsertLeave", "TextChang
 
 -- Clear search highlights with Ctrl+h
 vim.keymap.set("n", "<C-h>", ":nohlsearch<CR>", { silent = true })
+
+-- wrap at word boundaries
+vim.opt.linebreak = true
+vim.opt.breakindent = true
+vim.opt.breakat = " \t"
+
+-- auto-reload files when changed externally
+vim.opt.autoread = true
+
+-- Create autocommand for checking file changes
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+  pattern = "*",
+  command = "checktime",
+})

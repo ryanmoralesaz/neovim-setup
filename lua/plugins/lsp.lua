@@ -109,6 +109,10 @@ return {
             includeInlayFunctionParameterTypeHints = true,
           },
         },
+        javascript = {
+          validate = { enable = true },
+          suggestionActions = { enabled = false },
+        },
       },
     }
 
