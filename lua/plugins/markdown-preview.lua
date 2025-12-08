@@ -14,6 +14,7 @@ return {
     vim.g.mkdp_auto_close = 0
     vim.g.mkdp_refresh_slow = 0
 
+    vim.g.mkdp_theme = 'light'  -- Add this line
     -- Windows-compatible path
     vim.g.mkdp_markdown_css = vim.fn.stdpath("config") .. "/markdown-preview.css"
   end,
