@@ -273,7 +273,7 @@ vim.opt.relativenumber = false
 
 -- Choose shell for OS
 if vim.fn.has("win32") == 1 then
-  vim.o.shell = "pwsh"
+  vim.o.shell = "/usr/bin/zsh"
   vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
   vim.opt.shellquote = ""
   vim.opt.shellxquote = ""
