@@ -239,11 +239,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
       vim.cmd("Neotree show left")
       vim.defer_fn(function()
         vim.cmd("wincmd l")
-        vim.cmd("rightbelow vsplit | terminal")
+        vim.cmd("botright split | terminal")
         local term_win = vim.api.nvim_get_current_win()
         local screen_width = vim.o.columns
+        local screen_height = vim.o.lines
         local neotree_width = math.floor(screen_width / 5)
-        local terminal_width = math.floor(screen_width / 5)
+        local terminal_height = math.floor(screen_height / 3)
         for _, win in ipairs(vim.api.nvim_list_wins()) do
           local buf = vim.api.nvim_win_get_buf(win)
           local ft = vim.api.nvim_buf_get_option(buf, "filetype")
@@ -251,8 +252,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
             vim.api.nvim_win_set_width(win, neotree_width)
           end
         end
-        vim.api.nvim_win_set_width(term_win, terminal_width)
-        vim.cmd("wincmd h")
+        vim.api.nvim_win_set_height(term_win, terminal_height)
+        vim.cmd("wincmd k")
       end, 100)
     end
   end,
