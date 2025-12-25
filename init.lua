@@ -259,7 +259,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
         end
 
         vim.api.nvim_win_set_height(term_win, terminal_height)
-        vim.cmd("wincmd k")  -- Move focus back to editor (up instead of left)
+        vim.cmd("wincmd k") -- Move focus back to editor (up instead of left)
       end, 100)
     end
   end,
@@ -277,8 +277,8 @@ vim.g.clipboard = {
   },
 }
 
-vim.opt.foldcolumn = "2"
 vim.opt.clipboard = "unnamedplus"
+vim.opt.foldcolumn = "2"
 -- Exit terminal mode with 'hh'
 vim.keymap.set("t", "hh", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
