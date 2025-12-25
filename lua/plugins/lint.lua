@@ -6,7 +6,7 @@ return {
       typescript = { "eslint" },
       javascriptreact = { "eslint" },
       typescriptreact = { "eslint" },
-      html = { "htmlhint" },
+      -- html = { "htmlhint" },
       -- css = { "stylelint" },
     }
 

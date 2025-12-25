@@ -36,7 +36,7 @@ return {
       },
       mapping = cmp.mapping.preset.insert({
         ["<C-Space>"] = cmp.mapping.complete(),
-
+        [",,"] = cmp.mapping.confirm({ select = true }),
         -- CRITICAL: Enter closes menu and inserts newline (does NOT accept completion)
         ["<CR>"] = cmp.mapping({
           i = function(fallback)

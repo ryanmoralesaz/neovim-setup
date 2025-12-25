@@ -237,14 +237,19 @@ vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     if vim.fn.argc() == 0 or vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
       vim.cmd("Neotree show left")
+
       vim.defer_fn(function()
         vim.cmd("wincmd l")
+        -- Changed to horizontal split below (split instead of vsplit)
         vim.cmd("botright split | terminal")
+
         local term_win = vim.api.nvim_get_current_win()
         local screen_width = vim.o.columns
         local screen_height = vim.o.lines
         local neotree_width = math.floor(screen_width / 5)
+        -- Terminal takes up 1/3 of screen height
         local terminal_height = math.floor(screen_height / 3)
+
         for _, win in ipairs(vim.api.nvim_list_wins()) do
           local buf = vim.api.nvim_win_get_buf(win)
           local ft = vim.api.nvim_buf_get_option(buf, "filetype")
@@ -252,13 +257,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
             vim.api.nvim_win_set_width(win, neotree_width)
           end
         end
+
         vim.api.nvim_win_set_height(term_win, terminal_height)
-        vim.cmd("wincmd k")
+        vim.cmd("wincmd k")  -- Move focus back to editor (up instead of left)
       end, 100)
     end
   end,
 })
-
 -- Clipboard settings - works for both local and SSH
 vim.g.clipboard = {
   name = "OSC 52",
@@ -273,7 +278,7 @@ vim.g.clipboard = {
 }
 
 vim.opt.foldcolumn = "2"
-
+vim.opt.clipboard = "unnamedplus"
 -- Exit terminal mode with 'hh'
 vim.keymap.set("t", "hh", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
