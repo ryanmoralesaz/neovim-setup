@@ -29,16 +29,16 @@ vim.filetype.add({
 })
 
 -- Window navigation with ;w
-vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "Move to left window" })
-vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "Move to bottom window" })
-vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "Move to top window" })
-vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
+vim.keymap.set("n", "<leader>bh", "<C-w>h", { desc = "Move to left window" })
+vim.keymap.set("n", "<leader>bj", "<C-w>j", { desc = "Move to bottom window" })
+vim.keymap.set("n", "<leader>bk", "<C-w>k", { desc = "Move to top window" })
+vim.keymap.set("n", "<leader>bl", "<C-w>l", { desc = "Move to right window" })
 
 -- Window splits
-vim.keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Split vertically" })
-vim.keymap.set("n", "<leader>ws", "<C-w>s", { desc = "Split horizontally" })
-vim.keymap.set("n", "<leader>wq", "<C-w>q", { desc = "Close window" })
-vim.keymap.set("n", "<leader>wo", "<C-w>o", { desc = "Close other windows" })
+vim.keymap.set("n", "<leader>bv", "<C-w>v", { desc = "Split vertically" })
+vim.keymap.set("n", "<leader>bs", "<C-w>s", { desc = "Split horizontally" })
+vim.keymap.set("n", "<leader>bq", "<C-w>q", { desc = "Close window" })
+vim.keymap.set("n", "<leader>bo", "<C-w>o", { desc = "Close other windows" })
 
 -- Neo tree toggle ctrl+n and ;+n
 vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
