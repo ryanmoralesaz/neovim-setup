@@ -151,7 +151,7 @@ return {
     vim.lsp.config.emmet_ls = {
       default_config = {
         cmd = { "emmet-ls", "--stdio" },
-        filetypes = { "html", "css", "javascriptreact", "typescriptreact", "ejs" },
+        filetypes = { "html", "css", "javascriptreact", "typescriptreact", "ejs", "php" },
       },
       capabilities = capabilities,
       on_attach = on_attach,

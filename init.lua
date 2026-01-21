@@ -25,6 +25,7 @@ vim.filetype.add({
     ejs = "html",
     jsx = "javascriptreact",
     tsx = "typescriptreact",
+    php = "php",
   },
 })
 
@@ -56,7 +57,24 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.commentstring = "// %s"
   end,
 })
-
+-- Start emmet_ls for PHP files
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "php",
+  callback = function()
+    vim.lsp.start({
+      name = "emmet_ls",
+      cmd = { "emmet-ls", "--stdio" },
+      root_dir = vim.fn.getcwd(),
+      init_options = {
+        html = {
+          options = {
+            ["output.selfClosingStyle"] = "html",
+          },
+        },
+      },
+    })
+  end,
+})
 -- Create clean conformlogs
 vim.api.nvim_create_user_command("CleanLog", function()
   vim.cmd("%s/\\[[0-9;]*m//g")
@@ -258,7 +276,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
           end
         end
 
-        vim.api.nvim_win_set_height(term_win, terminal_height)
+        -- vim.api.nvim_win_set_height(term_win, terminal_height)
         vim.cmd("wincmd k") -- Move focus back to editor (up instead of left)
       end, 100)
     end

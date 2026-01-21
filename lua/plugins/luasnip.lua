@@ -31,6 +31,33 @@ return {
       }),
     })
     --
+    -- PHP/HTML snippets
+    ls.add_snippets("php", {
+      ls.snippet("bang", {
+        ls.text_node({
+          "<!DOCTYPE html>",
+          '<html lang="en">',
+          "<head>",
+          '    <meta charset="UTF-8">',
+          '    <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+          "    <title>",
+        }),
+        ls.insert_node(1, "Document"),
+        ls.text_node({
+          "</title>",
+          "</head>",
+          "<body>",
+          "    ",
+        }),
+        ls.insert_node(2),
+        ls.text_node({
+          "",
+          "</body>",
+          "</html>",
+        }),
+      }),
+    })
+    --
     -- Load snippets from lua/snippets/ directory
     require("luasnip.loaders.from_lua").load({
       paths = vim.fn.stdpath("config") .. "/lua/snippets",
