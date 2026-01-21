@@ -241,14 +241,14 @@ vim.api.nvim_create_autocmd("VimEnter", {
       vim.defer_fn(function()
         vim.cmd("wincmd l")
         -- Changed to horizontal split below (split instead of vsplit)
-        vim.cmd("botright split | terminal")
+        -- vim.cmd("botright split | terminal")
 
         local term_win = vim.api.nvim_get_current_win()
         local screen_width = vim.o.columns
         local screen_height = vim.o.lines
         local neotree_width = math.floor(screen_width / 5)
         -- Terminal takes up 1/3 of screen height
-        local terminal_height = math.floor(screen_height / 3)
+        -- local terminal_height = math.floor(screen_height / 3)
 
         for _, win in ipairs(vim.api.nvim_list_wins()) do
           local buf = vim.api.nvim_win_get_buf(win)
