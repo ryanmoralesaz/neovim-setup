@@ -44,6 +44,7 @@ vim.keymap.set("n", "<leader>bo", "<C-w>o", { desc = "Close other windows" })
 -- Neo tree toggle ctrl+n and ;+n
 vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
 vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
+vim.opt.ttimeoutlen = 10
 vim.opt.timeoutlen = 300
 
 -- Show filename in the title/tabline
@@ -254,7 +255,9 @@ end, { expr = true, silent = true })
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     if vim.fn.argc() == 0 or vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-      vim.cmd("Neotree show left")
+      vim.defer_fn(function()
+        vim.cmd("Neotree show left")
+      end, 50)
 
       vim.defer_fn(function()
         vim.cmd("wincmd l")
@@ -278,27 +281,39 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
         -- vim.api.nvim_win_set_height(term_win, terminal_height)
         vim.cmd("wincmd k") -- Move focus back to editor (up instead of left)
-      end, 100)
+      end, 150)
     end
   end,
 })
 -- Clipboard settings - works for both local and SSH
-vim.g.clipboard = {
-  name = "OSC 52",
-  copy = {
-    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-  },
-  paste = {
-    ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
-    ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
-  },
-}
-
-vim.opt.clipboard = "unnamedplus"
+-- Use OSC 52 for SSH (copy only), native clipboard for local
+if vim.env.SSH_CONNECTION then
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+      ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+      ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+    },
+    paste = {
+      ["+"] = function()
+        return vim.fn.getreg('"')
+      end,
+      ["*"] = function()
+        return vim.fn.getreg('"')
+      end,
+    },
+  }
+else
+  vim.opt.clipboard = "unnamedplus"
+end
 vim.opt.foldcolumn = "2"
 -- Exit terminal mode with 'hh'
 vim.keymap.set("t", "hh", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+-- Exit insert mode with hh
+vim.keymap.set("i", "hh", "<Esc>", { desc = "Exit insert mode" })
+
+-- Exit visual mode with hh
+vim.keymap.set("v", "hh", "<Esc>", { desc = "Exit visual mode" })
 
 -- Terminal and display settings
 vim.opt.termguicolors = true
