@@ -65,6 +65,8 @@ vim.api.nvim_create_autocmd("FileType", {
 
     -- PHP arrow operator shortcut (,. -> ->)
     vim.keymap.set("i", ",.", "->", { buffer = true, desc = "PHP arrow operator" })
+    vim.keymap.set("i", "/.", "<?php ", { buffer = true, desc = "PHP opening tag" })
+    vim.keymap.set("i", "./", "?> ", { buffer = true, desc = "PHP closing tag" })
   end,
 })
 
