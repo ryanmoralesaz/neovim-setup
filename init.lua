@@ -2,33 +2,6 @@
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
 
--- Bootstrap lazy.nvim (MUST come before require("lazy"))
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",
-    lazypath,
-  })
-end
-vim.opt.rtp:prepend(lazypath)
-
--- NOW we can setup lazy (after bootstrap)
-require("lazy").setup("plugins")
-
--- Recognize file extensions
-vim.filetype.add({
-  extension = {
-    ejs = "html",
-    jsx = "javascriptreact",
-    tsx = "typescriptreact",
-    php = "php",
-  },
-})
-
 -- Window navigation with ;w
 vim.keymap.set("n", "<leader>bh", "<C-w>h", { desc = "Move to left window" })
 vim.keymap.set("n", "<leader>bj", "<C-w>j", { desc = "Move to bottom window" })
@@ -44,12 +17,34 @@ vim.keymap.set("n", "<leader>bo", "<C-w>o", { desc = "Close other windows" })
 -- Neo tree toggle ctrl+n and ;+n
 vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
 vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
-vim.opt.ttimeoutlen = 10
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 300 -- Make ;n faster (reduces wait time for leader key)
 
 -- Show filename in the title/tabline
 vim.opt.title = true
 vim.opt.titlestring = "%t - nvim"
+
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Recognize file extensions
+vim.filetype.add({
+  extension = {
+    ejs = "html",
+    jsx = "javascriptreact",
+    tsx = "typescriptreact",
+  },
+})
 
 -- Set JavaScript-style comments
 vim.api.nvim_create_autocmd("FileType", {
@@ -58,24 +53,21 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.commentstring = "// %s"
   end,
 })
--- Start emmet_ls for PHP files
+
+-- PHP indentation and shortcuts
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "php",
   callback = function()
-    vim.lsp.start({
-      name = "emmet_ls",
-      cmd = { "emmet-ls", "--stdio" },
-      root_dir = vim.fn.getcwd(),
-      init_options = {
-        html = {
-          options = {
-            ["output.selfClosingStyle"] = "html",
-          },
-        },
-      },
-    })
+    vim.opt_local.autoindent = true
+    vim.opt_local.smartindent = true
+    vim.opt_local.cindent = true
+    vim.opt_local.indentexpr = ""
+
+    -- PHP arrow operator shortcut (,. -> ->)
+    vim.keymap.set("i", ",.", "->", { buffer = true, desc = "PHP arrow operator" })
   end,
 })
+
 -- Create clean conformlogs
 vim.api.nvim_create_user_command("CleanLog", function()
   vim.cmd("%s/\\[[0-9;]*m//g")
@@ -89,10 +81,11 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Toggle comment with two periods
+-- Toggle comment with two periods (handles --, //, /* */, <!-- -->)
 vim.keymap.set("n", "..", function()
   local line = vim.api.nvim_get_current_line()
   local ft = vim.bo.filetype
+
   local comment_start = "--"
   local comment_end = ""
 
@@ -132,13 +125,14 @@ vim.keymap.set("n", "..", function()
   end
 end, { desc = "Toggle comment" })
 
--- Visual mode: Toggle block comments
+-- Visual mode: Toggle block comments (adds /* at start, */ at end for JS/CSS)
 vim.keymap.set("v", "..", function()
   local ft = vim.bo.filetype
   local comment_start = "--"
   local comment_end = ""
   local use_block_comment = false
 
+  -- Determine comment style
   if ft:match("javascript") or ft:match("typescript") or ft:match("java") or ft == "c" or ft == "cpp" then
     comment_start = "/*"
     comment_end = " */"
@@ -152,6 +146,7 @@ vim.keymap.set("v", "..", function()
     comment_end = " -->"
     use_block_comment = true
   else
+    -- Line comment style for other filetypes
     if ft:match("python") then
       comment_start = "#"
     elseif ft == "lua" then
@@ -165,6 +160,7 @@ vim.keymap.set("v", "..", function()
   local end_line = vim.fn.line("'>")
   local first_line = vim.api.nvim_buf_get_lines(0, start_line - 1, start_line, false)[1]
 
+  -- Check if first line is commented
   local is_commented = false
   if use_block_comment then
     is_commented = first_line:match("^%s*" .. vim.pesc(comment_start))
@@ -173,29 +169,40 @@ vim.keymap.set("v", "..", function()
   end
 
   if use_block_comment then
+    -- Block comment: only modify first and last lines
     if is_commented then
+      -- Uncomment: remove /* from first line and */ from last line
       local first = vim.api.nvim_buf_get_lines(0, start_line - 1, start_line, false)[1]
       local last = vim.api.nvim_buf_get_lines(0, end_line - 1, end_line, false)[1]
+
       local pattern_start = "^(%s*)" .. vim.pesc(comment_start) .. "%s?"
       local pattern_end = "%s?" .. vim.pesc(comment_end) .. "(%s*)$"
+
       first = first:gsub(pattern_start, "%1", 1)
       last = last:gsub(pattern_end, "%1", 1)
+
       vim.api.nvim_buf_set_lines(0, start_line - 1, start_line, false, { first })
       vim.api.nvim_buf_set_lines(0, end_line - 1, end_line, false, { last })
     else
+      -- Comment: add /* to first line and */ to last line
       local first = vim.api.nvim_buf_get_lines(0, start_line - 1, start_line, false)[1]
       local last = vim.api.nvim_buf_get_lines(0, end_line - 1, end_line, false)[1]
+
       local indent_first = first:match("^%s*") or ""
       local content_first = first:sub(#indent_first + 1)
+
       first = indent_first .. comment_start .. " " .. content_first
       last = last .. comment_end
+
       vim.api.nvim_buf_set_lines(0, start_line - 1, start_line, false, { first })
       vim.api.nvim_buf_set_lines(0, end_line - 1, end_line, false, { last })
     end
   else
+    -- Line comment: comment each line individually
     for line_num = start_line, end_line do
       local line = vim.api.nvim_buf_get_lines(0, line_num - 1, line_num, false)[1]
       local new_line
+
       if is_commented then
         local pattern = "^(%s*)" .. vim.pesc(comment_start) .. "%s?"
         new_line = line:gsub(pattern, "%1", 1)
@@ -204,6 +211,7 @@ vim.keymap.set("v", "..", function()
         local content = line:sub(#indent + 1)
         new_line = indent .. comment_start .. " " .. content
       end
+
       vim.api.nvim_buf_set_lines(0, line_num - 1, line_num, false, { new_line })
     end
   end
@@ -214,9 +222,10 @@ end, { desc = "Toggle block comment on selection" })
 -- Completion settings
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
--- Enter always creates new line
+-- Enter always creates new line (doesn't accept completion)
 vim.keymap.set("i", "<CR>", function()
   if vim.fn.pumvisible() == 1 then
+    -- Close the completion menu and insert a newline
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-e><CR>", true, false, true), "n", false)
     return ""
   else
@@ -227,7 +236,7 @@ end, { expr = true, noremap = true, silent = true })
 -- Tab navigates completion menu or jumps in snippets
 vim.keymap.set("i", "<Tab>", function()
   if vim.fn.pumvisible() == 1 then
-    return "<C-n>"
+    return "<C-n>" -- Next completion item
   else
     local ls = require("luasnip")
     if ls.expand_or_jumpable() then
@@ -240,7 +249,7 @@ end, { expr = true, silent = true })
 
 vim.keymap.set("i", "<S-Tab>", function()
   if vim.fn.pumvisible() == 1 then
-    return "<C-p>"
+    return "<C-p>" -- Previous completion item
   else
     local ls = require("luasnip")
     if ls.jumpable(-1) then
@@ -251,25 +260,23 @@ vim.keymap.set("i", "<S-Tab>", function()
   end
 end, { expr = true, silent = true })
 
+-- Setup lazy.nvim
+require("lazy").setup("plugins")
+
 -- Auto-open layout: Neo-tree + Code + Terminal
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     if vim.fn.argc() == 0 or vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-      vim.defer_fn(function()
-        vim.cmd("Neotree show left")
-      end, 50)
+      vim.cmd("Neotree show left")
 
       vim.defer_fn(function()
-        vim.cmd("wincmd l")
-        -- Changed to horizontal split below (split instead of vsplit)
-        -- vim.cmd("botright split | terminal")
+        --        vim.cmd("wincmd l")
+        --      vim.cmd("rightbelow vsplit | terminal")
 
         local term_win = vim.api.nvim_get_current_win()
         local screen_width = vim.o.columns
-        local screen_height = vim.o.lines
         local neotree_width = math.floor(screen_width / 5)
-        -- Terminal takes up 1/3 of screen height
-        -- local terminal_height = math.floor(screen_height / 3)
+        --    local terminal_width = math.floor(screen_width / 5)
 
         for _, win in ipairs(vim.api.nvim_list_wins()) do
           local buf = vim.api.nvim_win_get_buf(win)
@@ -279,14 +286,14 @@ vim.api.nvim_create_autocmd("VimEnter", {
           end
         end
 
-        -- vim.api.nvim_win_set_height(term_win, terminal_height)
-        vim.cmd("wincmd k") -- Move focus back to editor (up instead of left)
-      end, 150)
+        --        vim.api.nvim_win_set_width(term_win, terminal_width)
+        vim.cmd("wincmd h")
+      end, 100)
     end
   end,
 })
--- Clipboard settings - works for both local and SSH
--- Use OSC 52 for SSH (copy only), native clipboard for local
+
+-- Use OSC 52 for SSH, native clipboard for local
 if vim.env.SSH_CONNECTION then
   vim.g.clipboard = {
     name = "OSC 52",
@@ -295,34 +302,27 @@ if vim.env.SSH_CONNECTION then
       ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
     },
     paste = {
-      ["+"] = function()
-        return vim.fn.getreg('"')
-      end,
-      ["*"] = function()
-        return vim.fn.getreg('"')
-      end,
+      ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+      ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
     },
   }
 else
   vim.opt.clipboard = "unnamedplus"
 end
-vim.opt.foldcolumn = "2"
--- Exit terminal mode with 'hh'
-vim.keymap.set("t", "hh", "<C-\\><C-n>", { desc = "Exit terminal mode" })
--- Exit insert mode with hh
-vim.keymap.set("i", "hh", "<Esc>", { desc = "Exit insert mode" })
 
--- Exit visual mode with hh
-vim.keymap.set("v", "hh", "<Esc>", { desc = "Exit visual mode" })
+vim.opt.foldcolumn = "2"
+
+-- Exit terminal mode with 'hh' (more reliable than Esc, especially in PowerShell)
+vim.keymap.set("t", "hh", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- Terminal and display settings
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = false
 
--- Choose shell for OS
+-- Choose shell for OS (cross-platform)
 if vim.fn.has("win32") == 1 then
-  vim.o.shell = "/usr/bin/zsh"
+  vim.o.shell = "pwsh"
   vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
   vim.opt.shellquote = ""
   vim.opt.shellxquote = ""
@@ -338,7 +338,7 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 
--- Auto-save settings
+-- Auto-save settings (robust version with multiple triggers)
 vim.opt.autowrite = true
 vim.opt.autowriteall = true
 vim.opt.updatetime = 200
@@ -354,16 +354,3 @@ vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave", "InsertLeave", "TextChang
 
 -- Clear search highlights with Ctrl+h
 vim.keymap.set("n", "<C-h>", ":nohlsearch<CR>", { silent = true })
-
--- Wrap at word boundaries
-vim.opt.linebreak = true
-vim.opt.breakindent = true
-vim.opt.breakat = " \t"
-
--- Auto-reload files when changed externally
-vim.opt.autoread = true
-
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
-  pattern = "*",
-  command = "checktime",
-})
