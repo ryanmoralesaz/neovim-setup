@@ -17,14 +17,32 @@ return {
           mappings = {
             -- Copy absolute path to clipboard
             ["Y"] = function(state)
+              -- Add safety check for state.tree
+              if not state.tree then
+                print("Neo-tree not fully initialized")
+                return
+              end
               local node = state.tree:get_node()
+              if not node then
+                print("No node selected")
+                return
+              end
               local path = node.path
               vim.fn.setreg("+", path)
               print("Copied absolute: " .. path)
             end,
             -- Copy relative path to clipboard
             ["y"] = function(state)
+              -- Add safety check for state.tree
+              if not state.tree then
+                print("Neo-tree not fully initialized")
+                return
+              end
               local node = state.tree:get_node()
+              if not node then
+                print("No node selected")
+                return
+              end
               local path = node.path
               local cwd = vim.fn.getcwd()
               local rel_path = path:gsub("^" .. vim.pesc(cwd) .. "[/\\]", "")
@@ -41,6 +59,10 @@ return {
             hide_dotfiles = false,
             hide_gitignored = false,
           },
+          follow_current_file = {
+            enabled = false, -- Add this to prevent race conditions
+          },
+          use_libuv_file_watcher = false, -- Add this - file watcher can cause issues on SSH
         },
         default_component_configs = {
           container = {
@@ -109,7 +131,6 @@ return {
       highlight NeoTreeGitUnstaged guifg=#e5c07b
       highlight NeoTreeGitStaged guifg=#98c379
     ]])
-      --    vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
-    end, 0)
+    end, 50) -- Also changed from 0 to 50ms to give more init time
   end,
 }
