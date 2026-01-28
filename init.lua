@@ -1,3 +1,4 @@
+vim.cmd("filetype indent on")
 -- Set leader key FIRST (CRITICAL - must be before any plugin loading)
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
@@ -54,22 +55,45 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- JavaScript/TypeScript indentation and shortcuts
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+  callback = function()
+    vim.opt_local.autoindent = true
+    vim.opt_local.smartindent = true
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.tabstop = 2
+    vim.opt_local.expandtab = true
+    
+    -- Auto-expand curly braces
+    vim.keymap.set("i", "{}", "<Esc>A{<CR>}<Esc>O", { buffer = true, desc = "Auto-expand braces" })
+  end,
+})
 -- PHP indentation and shortcuts
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "php",
   callback = function()
     vim.opt_local.autoindent = true
     vim.opt_local.smartindent = true
-    vim.opt_local.cindent = true
-    vim.opt_local.indentexpr = ""
 
-    -- PHP arrow operator shortcut (,. -> ->)
-    vim.keymap.set("i", ",.", "->", { buffer = true, desc = "PHP arrow operator" })
-    vim.keymap.set("i", "/.", "<?php ", { buffer = true, desc = "PHP opening tag" })
-    vim.keymap.set("i", "./", "?> ", { buffer = true, desc = "PHP closing tag" })
+    -- Ensure these are set to 2 so the "O" jump knows how far to go
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.tabstop = 2
+    vim.opt_local.expandtab = true
+
+    -- Remove the indentexpr = "" line to let Neovim use its internal PHP rules
+
+    -- PHP shortcuts
+    vim.keymap.set("i", ",.", "->", { buffer = true })
+    vim.keymap.set("i", "/.", "<?php ", { buffer = true })
+    vim.keymap.set("i", "./", "?> ", { buffer = true })
+
+    -- The Magic Expansion
+    -- Typing }} will now: Exit insert, place the brace,
+    -- and 'O' will open a perfectly indented line above it.
+    vim.keymap.set("i", "{}", "<Esc>A{<CR>}<Esc>O", { buffer = true })
   end,
 })
-
 -- Create clean conformlogs
 vim.api.nvim_create_user_command("CleanLog", function()
   vim.cmd("%s/\\[[0-9;]*m//g")
