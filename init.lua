@@ -340,6 +340,7 @@ vim.opt.foldcolumn = "2"
 
 -- Exit terminal mode with 'hh' (more reliable than Esc, especially in PowerShell)
 vim.keymap.set("t", "hh", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+vim.keymap.set("t", ",.", "->", { desc = "Arrow operator in terminal" })
 
 -- Terminal and display settings
 vim.opt.termguicolors = true
