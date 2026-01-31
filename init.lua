@@ -2,7 +2,8 @@ vim.cmd("filetype indent on")
 -- Set leader key FIRST (CRITICAL - must be before any plugin loading)
 vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
-
+-- escape key to h,h
+vim.keymap.set("i", "hh", "<Esc>")
 -- Window navigation with ;w
 vim.keymap.set("n", "<leader>bh", "<C-w>h", { desc = "Move to left window" })
 vim.keymap.set("n", "<leader>bj", "<C-w>j", { desc = "Move to bottom window" })
@@ -64,7 +65,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.shiftwidth = 2
     vim.opt_local.tabstop = 2
     vim.opt_local.expandtab = true
-    
+
     -- Auto-expand curly braces
     vim.keymap.set("i", "{}", "<Esc>A{<CR>}<Esc>O", { buffer = true, desc = "Auto-expand braces" })
   end,
