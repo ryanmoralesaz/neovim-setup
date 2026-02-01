@@ -382,3 +382,18 @@ vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave", "InsertLeave", "TextChang
 
 -- Clear search highlights with Ctrl+h
 vim.keymap.set("n", "<C-h>", ":nohlsearch<CR>", { silent = true })
+-- MAC CRITICAL SETTINGS
+-- no swap on paste
+vim.keymap.set("x", "p", 'p:let @+=@0<CR>:let @"=@0<CR>', { silent = true })
+-- wrap at word boundaries
+vim.opt.linebreak = true
+vim.opt.breakindent = true
+vim.opt.breakat = " \t"
+-- auto-reload files when changed externally
+vim.opt.autoread = true
+
+-- Create autocommand for checking file changes
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+  pattern = "*",
+  command = "checktime",
+})
