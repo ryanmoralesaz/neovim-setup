@@ -358,6 +358,7 @@ else
 end
 
 vim.keymap.set("n", "<leader>t", ":botright vsp | terminal<CR>", { desc = "Open terminal in vsplit" })
+vim.keymap.set("n", "<leader>T", ":botright sp | terminal<CR>", { desc = "Open terminal in hsplit" })
 
 -- Indentation settings
 vim.opt.expandtab = true
