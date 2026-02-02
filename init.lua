@@ -323,7 +323,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 -- Use OSC 52 for SSH, native clipboard for local
 if vim.env.SSH_CONNECTION then
   vim.g.clipboard = {
-    name = "OSC 52",
+    name = "osc52",
     copy = {
       ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
       ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
@@ -333,10 +333,9 @@ if vim.env.SSH_CONNECTION then
       ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
     },
   }
-else
-  vim.opt.clipboard = "unnamedplus"
 end
 
+vim.opt.clipboard = "unnamedplus"
 vim.opt.foldcolumn = "2"
 
 -- Exit terminal mode with 'hh' (more reliable than Esc, especially in PowerShell)
