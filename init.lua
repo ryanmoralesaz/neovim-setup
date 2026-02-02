@@ -363,8 +363,25 @@ else
   vim.o.shell = vim.fn.executable("zsh") == 1 and "zsh" or "bash"
 end
 
-vim.keymap.set("n", "<leader>t", ":vsp | terminal<CR>", { desc = "Open terminal in vsplit" })
+vim.keymap.set("n", "<leader>t", ":botright vsp | terminal<CR>", { desc = "Open terminal in vsplit" })
 vim.keymap.set("n", "<leader>h", ":sp | terminal<CR>", { desc = "Open terminal in hsplit" })
+-- Toggle terminal (opens if closed, hides if open)
+vim.keymap.set("n", "<leader>tt", function()
+  local term_wins = vim.tbl_filter(function(win)
+    local buf = vim.api.nvim_win_get_buf(win)
+    return vim.bo[buf].buftype == "terminal"
+  end, vim.api.nvim_list_wins())
+
+  if #term_wins > 0 then
+    -- Close all terminal windows
+    for _, win in ipairs(term_wins) do
+      vim.api.nvim_win_close(win, false)
+    end
+  else
+    -- Open terminal (or reopen last one)
+    vim.cmd("rightbelow vsp | terminal")
+  end
+end, { desc = "Toggle terminal" })
 
 -- Indentation settings
 vim.opt.expandtab = true
