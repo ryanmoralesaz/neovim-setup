@@ -302,8 +302,20 @@ vim.api.nvim_create_autocmd("VimEnter", {
     if vim.fn.argc() == 0 or vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
       vim.defer_fn(function()
         require("neo-tree")
-        vim.cmd("Neotree show left")
+        -- Check if Neo-tree is already open
+        local neotree_open = false
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].filetype == "neo-tree" then
+            neotree_open = true
+            break
+          end
+        end
 
+        -- Only open if not already open
+        if not neotree_open then
+          vim.cmd("Neotree show left")
+        end
         vim.defer_fn(function()
           --        vim.cmd("wincmd l")
           --      vim.cmd("rightbelow vsplit | terminal")
@@ -368,21 +380,42 @@ end
 
 vim.keymap.set("n", "<leader>t", ":botright vsp | terminal<CR>", { desc = "Open terminal in vsplit" })
 vim.keymap.set("n", "<leader>h", ":sp | terminal<CR>", { desc = "Open terminal in hsplit" })
--- Toggle terminal (opens if closed, hides if open)
+-- Toggle terminal (handles multiple terminals)
 vim.keymap.set("n", "<leader>tt", function()
+  -- Find terminal windows
   local term_wins = vim.tbl_filter(function(win)
     local buf = vim.api.nvim_win_get_buf(win)
     return vim.bo[buf].buftype == "terminal"
   end, vim.api.nvim_list_wins())
 
   if #term_wins > 0 then
-    -- Close all terminal windows
+    -- Store terminal buffers before closing windows
+    vim.g.hidden_terminals = vim.tbl_map(function(win)
+      return vim.api.nvim_win_get_buf(win)
+    end, term_wins)
+
+    -- Close all terminal windows (but keep buffers alive)
     for _, win in ipairs(term_wins) do
       vim.api.nvim_win_close(win, false)
     end
   else
-    -- Open terminal (or reopen last one)
-    vim.cmd("rightbelow vsp | terminal")
+    -- Reopen all hidden terminals
+    if vim.g.hidden_terminals and #vim.g.hidden_terminals > 0 then
+      for i, buf in ipairs(vim.g.hidden_terminals) do
+        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+          if i == 1 then
+            vim.cmd("rightbelow vsp")
+          else
+            vim.cmd("belowright sp")
+          end
+          vim.api.nvim_win_set_buf(0, buf)
+        end
+      end
+      vim.g.hidden_terminals = nil
+    else
+      -- No hidden terminals, create new one
+      vim.cmd("rightbelow vsp | terminal")
+    end
   end
 end, { desc = "Toggle terminal" })
 
