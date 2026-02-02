@@ -16,6 +16,12 @@ vim.keymap.set("n", "<leader>bs", "<C-w>s", { desc = "Split horizontally" })
 vim.keymap.set("n", "<leader>bq", "<C-w>q", { desc = "Close window" })
 vim.keymap.set("n", "<leader>bo", "<C-w>o", { desc = "Close other windows" })
 
+-- Window resizing with leader key
+vim.keymap.set("n", "<leader>=", "<C-w>10>", { desc = "Widen window" })
+vim.keymap.set("n", "<leader>-", "<C-w>10<", { desc = "Narrow window" })
+vim.keymap.set("n", "<leader>+", "<C-w>10+", { desc = "Taller window" })
+vim.keymap.set("n", "<leader>_", "<C-w>10-", { desc = "Shorter window" })
+
 -- Neo tree toggle ctrl+n and ;+n
 vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
 vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
@@ -357,8 +363,8 @@ else
   vim.o.shell = vim.fn.executable("zsh") == 1 and "zsh" or "bash"
 end
 
-vim.keymap.set("n", "<leader>t", ":botright vsp | terminal<CR>", { desc = "Open terminal in vsplit" })
-vim.keymap.set("n", "<leader>T", ":botright sp | terminal<CR>", { desc = "Open terminal in hsplit" })
+vim.keymap.set("n", "<leader>t", ":vsp | terminal<CR>", { desc = "Open terminal in vsplit" })
+vim.keymap.set("n", "<leader>h", ":sp | terminal<CR>", { desc = "Open terminal in hsplit" })
 
 -- Indentation settings
 vim.opt.expandtab = true
