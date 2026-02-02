@@ -300,27 +300,30 @@ require("lazy").setup("plugins")
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     if vim.fn.argc() == 0 or vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-      vim.cmd("Neotree show left")
-
       vim.defer_fn(function()
-        --        vim.cmd("wincmd l")
-        --      vim.cmd("rightbelow vsplit | terminal")
+        require("neo-tree")
+        vim.cmd("Neotree show left")
 
-        local term_win = vim.api.nvim_get_current_win()
-        local screen_width = vim.o.columns
-        local neotree_width = math.floor(screen_width / 5)
-        --    local terminal_width = math.floor(screen_width / 5)
+        vim.defer_fn(function()
+          --        vim.cmd("wincmd l")
+          --      vim.cmd("rightbelow vsplit | terminal")
 
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-          local buf = vim.api.nvim_win_get_buf(win)
-          local ft = vim.api.nvim_buf_get_option(buf, "filetype")
-          if ft == "neo-tree" then
-            vim.api.nvim_win_set_width(win, neotree_width)
+          local term_win = vim.api.nvim_get_current_win()
+          local screen_width = vim.o.columns
+          local neotree_width = math.floor(screen_width / 5)
+          --    local terminal_width = math.floor(screen_width / 5)
+
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            local ft = vim.api.nvim_buf_get_option(buf, "filetype")
+            if ft == "neo-tree" then
+              vim.api.nvim_win_set_width(win, neotree_width)
+            end
           end
-        end
 
-        --        vim.api.nvim_win_set_width(term_win, terminal_width)
-        vim.cmd("wincmd h")
+          --        vim.api.nvim_win_set_width(term_win, terminal_width)
+          vim.cmd("wincmd h")
+        end, 50)
       end, 100)
     end
   end,
