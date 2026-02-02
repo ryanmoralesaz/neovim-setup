@@ -17,10 +17,10 @@ vim.keymap.set("n", "<leader>bq", "<C-w>q", { desc = "Close window" })
 vim.keymap.set("n", "<leader>bo", "<C-w>o", { desc = "Close other windows" })
 
 -- Window resizing with leader key
-vim.keymap.set("n", "<leader>=", "<C-w>10>", { desc = "Widen window" })
+vim.keymap.set("n", "<leader>_", "<C-w>10>", { desc = "Widen window" })
 vim.keymap.set("n", "<leader>-", "<C-w>10<", { desc = "Narrow window" })
 vim.keymap.set("n", "<leader>+", "<C-w>10+", { desc = "Taller window" })
-vim.keymap.set("n", "<leader>_", "<C-w>10-", { desc = "Shorter window" })
+vim.keymap.set("n", "<leader>=", "<C-w>10-", { desc = "Shorter window" })
 
 -- Neo tree toggle ctrl+n and ;+n
 vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
