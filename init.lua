@@ -4,6 +4,11 @@ vim.g.mapleader = ";"
 vim.g.maplocalleader = ";"
 -- escape key to h,h
 vim.keymap.set("i", "hh", "<Esc>")
+if vim.env.SSH_CONNECTION then
+  -- Force escape key to work properly
+  vim.keymap.set("i", "<Esc>", "<C-\\><C-n>", { noremap = true })
+  vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true })
+end
 -- Window navigation with ;w
 vim.keymap.set("n", "<leader>bh", "<C-w>h", { desc = "Move to left window" })
 vim.keymap.set("n", "<leader>bj", "<C-w>j", { desc = "Move to bottom window" })
@@ -26,7 +31,7 @@ vim.keymap.set("n", "<leader>=", "<C-w>10-", { desc = "Shorter window" })
 vim.keymap.set("n", "<C-n>", ":Neotree toggle<CR>", { silent = true })
 vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>", { silent = true })
 vim.opt.timeoutlen = 300 -- Make ;n faster (reduces wait time for leader key)
-
+vim.opt.ttimeoutlen = 10
 -- Show filename in the title/tabline
 vim.opt.title = true
 vim.opt.titlestring = "%t - nvim"
